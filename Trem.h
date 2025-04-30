@@ -26,8 +26,10 @@ void insereVagaoInicio(Trem *trem, double capacidade, const char *tipoCarga);
 void insereVagaoFim(Trem *trem, double capacidade, const char *tipoCarga);
 void maiorCapacidadeTotal(Trem *trem);
 void vagoesOrdenadosPorTipoCarga(Trem *trem);
-void removeVagao(Trem *trem);
+void removeUmVagao(Trem *trem);
+void removeVariosVagoes(Trem *trem);
 void listarVagoes(Trem *trem);
+void addTrem(Trem *trem);
 void removeTrem(Trem *trem);
 int minMax(int posicao, int tamanho);
 

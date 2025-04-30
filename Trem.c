@@ -34,14 +34,7 @@ void atualizaPosicoes(Trem *trem) {
         vagaoAtual = vagaoAtual->prox;
     }
 }
-int minMax(int posicao, int tamanho){ //a = posicao, b = trem->sizeTrem
-    while (posicao < 0 || posicao > tamanho) {
-        printf("Erro! Posição inválida\n");
-        printf("Digite uma posição válida (0 até %d): ", tamanho);
-        scanf("%d", &posicao);
-    }
-    return posicao;
-}
+
 void insereVagaoInicio(Trem *trem, double capacidade, char const *tipoCarga){
     if(trem == NULL){
         return;
@@ -63,7 +56,7 @@ void insereVagaoInicio(Trem *trem, double capacidade, char const *tipoCarga){
         atualizaPosicoes(trem);
     }
 }
-void insereVagaoMeio(Trem *trem, double capacidade, char const *tipoCarga){
+void insereVagaoMeio(Trem *trem, double capacidade, char const *tipoCarga){ //verificar se esta correto
     if(trem == NULL){
         return;
     }
@@ -80,7 +73,11 @@ void insereVagaoMeio(Trem *trem, double capacidade, char const *tipoCarga){
         int posicao;
         printf("Em qual posição deseja inserir o vagão? (0 até %i)", trem->sizeTrem);
         scanf("%i", &posicao);
-        posicao = maxMin(posicao, trem->sizeTrem); //verifica se a posição é válida;
+        while(posicao < 0 || posicao > trem->sizeTrem) { //verificar depois
+            printf("Erro! Posição inválida\n");
+            printf("Digite uma posição válida (0 até %d): ", trem->sizeTrem);
+            scanf("%d", &posicao);
+        }
         int i = 0;
         Vagao *vagaoAtual = trem->vagaoInicio;
         if(posicao <= 0){
@@ -129,4 +126,63 @@ void insereVagaoFim(Trem *trem, double capacidade, char const *tipoCarga){
         trem->sizeTrem++;
         atualizaPosicoes(trem);
     }
+}
+
+void removeUmVagao(Trem *trem){
+    if (trem == NULL || trem->vagaoInicio == NULL) {
+        printf("Trem vazio ou inexistente.\n");
+        return;
+    }
+    int posicao = 0;
+    printf("Qual vagão deseja remover? (0 até %i)", trem->sizeTrem);
+    scanf("%d", &posicao);
+    while(posicao < 0 || posicao > trem->sizeTrem - 1) {
+        printf("Erro! Posição inválida\n");
+        printf("Digite uma posição válida (0 até %d): ", trem->sizeTrem);
+        scanf("%d", &posicao);
+    }
+    Vagao *vagaoAtual = trem->vagaoInicio;
+    if(posicao == 0){
+        if(trem->vagaoInicio->prox == NULL){
+            trem->vagaoInicio = NULL;
+            trem->vagaoFinal = NULL;
+        }else{
+            vagaoAtual->prox->ant = NULL;
+            trem->vagaoInicio = vagaoAtual->prox;
+        }
+        free(vagaoAtual);
+    }else if(posicao == trem->sizeTrem - 1){
+        vagaoAtual = trem->vagaoFinal;
+        trem->vagaoFinal = vagaoAtual->ant;
+        if (trem->vagaoFinal != NULL){
+            trem->vagaoFinal->prox = NULL;
+        }else{
+            trem->vagaoInicio = NULL;
+        }
+        free(vagaoAtual);
+    }else{
+        while(vagaoAtual != NULL && vagaoAtual->posicao < posicao){
+            vagaoAtual = vagaoAtual->prox;
+        }
+        vagaoAtual->ant->prox = vagaoAtual->prox;
+        vagaoAtual->prox->ant = vagaoAtual->ant;
+        free(vagaoAtual);
+    }
+    trem->sizeTrem--;
+    atualizaPosicoes(trem);
+}
+void removeVariosVagoes(Trem *trem){
+    if (trem == NULL || trem->vagaoInicio == NULL) {
+        printf("Trem vazio ou inexistente.\n");
+        return;
+    }
+    Vagao *vagaoAtual = trem->vagaoInicio;
+    while(vagaoAtual != NULL){
+        trem->vagaoInicio = trem->vagaoInicio->prox;
+        free(vagaoAtual);
+        vagaoAtual = trem->vagaoInicio;
+    }
+    trem->sizeTrem = 0;
+    trem->vagaoInicio = NULL;
+    trem->vagaoFinal = NULL;
 }
